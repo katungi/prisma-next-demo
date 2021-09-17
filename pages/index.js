@@ -1,82 +1,48 @@
-import Head from 'next/head'
+import { PrismaClient } from '@prisma/client';
+import Head from 'next/head';
+import Link from 'next/link';
+import Card from '../components/cards';
 
-export default function Home() {
+const prisma = new PrismaClient();
+
+/** @param {import('next').InferGetServerSidePropsType<typeof getServerSideProps> } props */
+export default function Home({ data }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div className='flex flex-col items-center justify-center min-h-screen py-2'>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Music Box</title>
+        <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
+      <main className='flex flex-col items-center justify-center w-full flex-1 px-20 text-center'>
+        <h1 className='text-2xl xs:text-3xl md:text-6xl font-bold'>
           Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
+          <a className='text-green-600' href='https://nextjs.org'>
+            Music Box
           </a>
         </h1>
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
-            pages/index.js
-          </code>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        <div className='mt-4 grid grid-cols-1 xs:grid-cols-3 md:grid-cols-4 xl:grid-cols-4 gap-4'>
+          {data.map((item) => (
+            <Card title={item.title} art={item.art} artist={item.artist} />
+          ))}
         </div>
+        <Link href='/create'>
+          <button className='rounded-lg border-2 border-solid border-green-600 p-5 text-center text-green-600 mt-10'>
+            Add to Music Box
+          </button>
+        </Link>
       </main>
-
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
-        </a>
-      </footer>
     </div>
-  )
+  );
+}
+
+export async function getServerSideProps() {
+  const songs = await prisma.song.findMany();
+
+  return {
+    props: {
+      data: songs,
+    },
+  };
 }
