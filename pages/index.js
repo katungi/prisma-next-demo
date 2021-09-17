@@ -24,10 +24,15 @@ export default function Home({ data }) {
 
         <div className='mt-4 grid grid-cols-1 xs:grid-cols-3 md:grid-cols-4 xl:grid-cols-4 gap-4'>
           {data.map((item) => (
-            <Card title={item.title} art={item.art} artist={item.artist} />
+            <Card
+              title={item.title}
+              art={item.art}
+              artist={item.artist}
+              key={item.id}
+            />
           ))}
         </div>
-        <Link href='/create'>
+        <Link href='/create' passHref={true}>
           <button className='rounded-lg border-2 border-solid border-green-600 p-5 text-center text-green-600 mt-10'>
             Add to Music Box
           </button>
